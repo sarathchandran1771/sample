@@ -72,7 +72,8 @@ const server = app.listen(port, () =>console.log("Server started listening on po
 const io = require("socket.io")(server,{
   pingTimeout: 6000,
   cors: {
-    origin: "http://localhost:3000",
+    //origin: "http://localhost:3000",
+    origin: "https://connectloom.shop",
   },
 }); 
 
