@@ -170,7 +170,7 @@ const getAdminLogin = async (req, res) => {
           console.log("Post status updated successfully");    
           res.status(200).json({ post });
         } else {
-          console.log("Post not found");
+          console.log("reported Post not found");
           res.status(200).json({ message: "No reported posts available" });
         }
       } catch (error) {

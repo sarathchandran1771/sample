@@ -11,7 +11,6 @@ const getUsersForChat = async (req, res) => {
     if (users.length === 0) {
       return res.status(401).json({ message: 'User Not found' });
     }
-    console.log("req.body", req.body)
     return res.status(200).json({ users });
   } catch (error) {
     console.error("Internal error 500", error);
@@ -94,12 +93,8 @@ const getMessage = async (req, res) => {
     .lean()
     .sort({ updatedAt: 1 });
 
-    const userIdsArray = messages[0]?.chatRoom?.userIds || [];
-    
+    const userIdsArray = messages[0]?.chatRoom?.userIds || []; 
     const userData = await User.find({ _id: { $in: userIdsArray } },{ password: 0 }).lean();
-    console.log("req.messages",messages)
-    console.log("req.userData",userData)
-
     const projectedMessages = messages.map((msg) => {
       return {
         fromSelf: msg.sender,
@@ -113,7 +108,6 @@ const getMessage = async (req, res) => {
           updatedAt: msg.chatRoom.updatedAt,
         },      };
     });
-    console.log("projectedMessages",projectedMessages)
     res.json(projectedMessages);
   } catch (error) {
     console.error(error);
@@ -127,24 +121,3 @@ module.exports = {
   getMessage,
   createRoomID
 };
-
-
-
-
-
-// <!doctype html>
-// <html lang="en">
-//   <head>
-//     <meta charset="UTF-8" />
-//     <link rel="icon" href="./assets/profile_pic.jpg" />
-
-//     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-//     <title>ConnectLoom</title>
-//     <script type="module" crossorigin src="/assets/index-6b79f797.js"></script>
-//     <link rel="stylesheet" href="/assets/index-72ecd885.css">
-//   </head>
-//   <body>
-//     <div id="root"></div>
-    
-//   </body>
-// </html>

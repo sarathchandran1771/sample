@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Friendrequest = require("../../models/FollowersSchema");
 const User = require("../../models/userSchema");
+const { json } = require("body-parser");
 
 // POST endpoint to send a friend request
 
@@ -91,8 +92,6 @@ const getPendingRequest = async (req, res) => {
       fromUser: fromUserId,
       toUser: toUserId,
     });
-
-    console.log("pendingRequests", pendingRequest);
     if (pendingRequest) {
       return res
         .status(200)
@@ -167,8 +166,36 @@ const respondRequest = async (req, res) => {
   }
 };
 
+
+const getFollowersList = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    // Check if the target user is blocked
+    const userData = await User.find({_id:userId}).populate("followers")
+    const data=userData[0].followers
+    return res.status(200).json({ message: "Followers data List",data});
+    } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+const getFollowingList = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    // Check if the target user is blocked
+    const userData = await User.find({_id:userId}).populate("following")
+    const data=userData[0].following
+    return res.status(200).json({ message: "Following data List",data });
+    } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 module.exports = {
   sendRequest,
   respondRequest,
   getPendingRequest,
+  getFollowersList,
+  getFollowingList
 };

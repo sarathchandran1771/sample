@@ -68,19 +68,19 @@ const userSchema = new mongoose.Schema({
     },
     pendingFollowers: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'user',
     }],
     pendingFollowing: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'user',
     }], 
     followers: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'user',
     }],
     following: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'user',
     }],
     account: {
         followersCount: {

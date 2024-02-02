@@ -47,7 +47,7 @@ const postNewUserRegister = async (req, res) => {
       profilename,
       privatePublic,
       profilePic,
-      Bio,
+      Bio, 
       isPremium,
     } = req.body;
     if (!validator.isEmail(emailId)) {
@@ -176,7 +176,6 @@ const userForgetPassword = async (req, res) => {
       return res.send({ status: "User not exists" });
     }
     const token = verifyToken(res, user._id);
-
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -186,7 +185,6 @@ const userForgetPassword = async (req, res) => {
     });
 
     const logoSrc = `${process.env.FRONTEND_BASEURL}/views/icons/ConnectLoom_Logo.png`;
-    console.log("logoSrc",logoSrc)
     const mailOptions = {
       from: process.env.USER,
       to: emailId,
@@ -221,13 +219,27 @@ const userForgetPassword = async (req, res) => {
         return res.send({ status: "Success" });
       }
     });
-    
-
     res.send({ status: "Token sent successfully" });
   } catch (error) {
     console.error("Error in forgetPassword:", error);
     res.status(500).send({ status: "Internal Server Error" });
   }
+};
+
+const userProfileData = async (req, res) => {
+  const {userId} = req.params;
+  try {
+    // Check if the user exists
+    const user = await User.findById({ _id: userId });
+    const postByUser = await Post.find({ user:user._id,isReport: { $ne: true }, reportCount: { $lt: 5 }, archived: { $ne: true }  });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    return res.status(200).json({ message: "User data ",user,postByUser });
+  } catch (error) {
+    console.error("Error resetting password:", error);
+    res.status(500).json({ message: "Error resetting password" });
+  } 
 };
 
 const resetPassword = async (req, res) => {
@@ -418,11 +430,7 @@ const updateUser = async (req, res) => {
      } = req.body;
     
     const user = await User.findById({_id: userId});
-
-    console.log("user for edit", user);
-
     if (!user) {
-      console.log("User not found for updating");
       return res.status(404).json({ error: "User not found" });
     }
    
@@ -431,7 +439,6 @@ const updateUser = async (req, res) => {
       if (password) {
         const salt = bcrypt.genSaltSync(saltRounds);
         const hashedPassword = bcrypt.hashSync(password, salt);
-        console.log("hashedPassword",hashedPassword)
         user.password = hashedPassword;
       }
       // Update user fields
@@ -465,8 +472,6 @@ const client_secret = process.env.STRIPE_PUBLISHABLE_KEY
 const ConfirmPayment = async (req, res) => {
   try {
     const { userId} = req.body;
-    console.log("ConfirmPayment req.body", userId);
-
     const user = await User.findById(userId);
     if (!user) {
       console.log("User not found for updating");
@@ -667,6 +672,7 @@ module.exports = {
   verifyEmail,
   postNewUserRegister,
   getNewRegisteredUser,
+  userProfileData,
   logoutUser,
   userForgetPassword,
   resetPassword,

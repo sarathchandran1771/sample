@@ -38,7 +38,7 @@ const savePost = async (req, res) => {
     const post = await Post.findById({ _id: postId });
 
     if (!post) {
-      return res.status(404).json({ message: "Post not found" });
+      return res.status(404).json({ message: "savepost not found" });
     }
     const user = await User.findById(userId);
 

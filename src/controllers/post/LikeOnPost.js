@@ -14,7 +14,7 @@ const likeUnlikePost = async (req, res) => {
     });
 
      if (!post) {
-        return res.status(404).json({ success: false, message: "Post not found" });
+        return res.status(404).json({ success: false, message: "Liked Post not found" });
       }
 
       const likes = await Likes.findOne({ user: userId, post: postId }); 

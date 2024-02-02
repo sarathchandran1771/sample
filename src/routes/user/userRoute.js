@@ -41,17 +41,15 @@ userRouter.get(
   }
 );
 
-userRouter.post( 
-  "/new/user",
-  passwordStrengthMiddleware,
-  userController.postNewUserRegister
-  );
+userRouter.post( "/new/user",passwordStrengthMiddleware,userController.postNewUserRegister);
 
 userRouter.post("/mail-verification", userController.OAuth);
 
 userRouter.post("/verifyemail", userController.verifyEmail);
 
-userRouter.post("/login", passwordStrengthMiddleware, userController.getNewRegisteredUser); 
+userRouter.post("/login", passwordStrengthMiddleware, userController.getNewRegisteredUser);
+
+userRouter.get("/profile/:userId", userController.userProfileData);
 
 userRouter.post("/forgetPassword", userController.userForgetPassword);
 
@@ -68,33 +66,37 @@ userRouter.post("/logout", userController.logoutUser);
 
 userRouter.post("/check-and-logout", userController.checkAndLogout);
 
-
 // POST endpoint to send a friend request
 userRouter.post('/send-request',blockUserMiddleware, friendRequestController.sendRequest);
 
 
-userRouter.get('/pending-request',blockUserMiddleware, friendRequestController.getPendingRequest);
+userRouter.get('/pending-request', friendRequestController.getPendingRequest);
 
 // POST endpoint to accept or decline a friend request
 userRouter.post('/respond-request', friendRequestController.respondRequest);
 
+userRouter.get('/getFollowers/:userId', friendRequestController.getFollowersList);
+
+userRouter.get('/getFollowing/:userId', friendRequestController.getFollowingList);
+
 //confirm-payment
-userRouter.post('/paypal/payment', userController.paypalPayment);
+userRouter.post('/paypal/payment', userController.paypalPayment); 
 
 userRouter.get('/paypal/success', userController.paypalSuccess);
-
+ 
 userRouter.post("/Confirm-payment", userController.ConfirmPayment);
 
 userRouter.post('/webhook', userController.webhookHandler);
 
 userRouter.get('/search-users',userController. searchUsers);
 
-
 // Route to create a notification
 userRouter.post('/notifications', notificationController.createNotification);
 
 // Route to get unread notifications for a user
 userRouter.get('/notifications/unread/:userId', notificationController.getUnreadNotifications);
+
+userRouter.get('/notify/:notifyId', notificationController.forwardNotifyPost);
 
 // Route to mark a notification as read
 userRouter.patch('/notifications/:notificationId/mark-read', notificationController.markNotificationAsRead);

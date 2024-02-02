@@ -51,19 +51,19 @@ const postNewDataPosting = async (req, res) => {
   }
 };
 
-const getDataPostedOnprofile = async (req, res) => {
+const getArchivePostOnprofile = async (req, res) => {
   try {
-    const usersId = req.params.userID;
+    const usersId = req.params.userId;
     const post = await Post.find({
       user: usersId,
       isReport: false,
       archived: true,
 })      .populate("user")
       .select("-password");
-
+ 
       if (!post || post.length === 0) {
-        console.log("Posts not found");
-      return res.status(200).json({ message: "Posts not found" });
+        console.log("ArchivePost not found");
+      return res.status(200).json({ message: "ArchivePost not found" });
     }
     res.status(200).json(post);
   } catch (error) {
@@ -95,12 +95,9 @@ const deletePost = async (req, res) => {
     // Check if the post exists
     const post = await Post.findById(postId);
     const user = await User.findById(post.user._id);
-    console.log("user", user);
-
-    console.log("post details from delete post", post);
 
     if (!post) {
-      return res.status(404).json({ message: "Post not found" });
+      return res.status(404).json({ message: "deletePost not found" });
     }
 
     if (post.user.toString() !== user._id.toString()) {
@@ -126,7 +123,7 @@ const reportPost = async (req, res) => {
 
     if (!post) {
       console.log("Post not found for reporting");
-      return res.status(404).json({ error: "Post not found" });
+      return res.status(404).json({ error: "reportPost not found" });
     }
 
     post.reportCount += 1;
@@ -153,7 +150,7 @@ const archivePost = async (req, res) => {
     const user = await User.findById(post.user._id);
     
     if (!post) {
-      return res.status(404).json({ message: "Post not found" });
+      return res.status(404).json({ message: "archive Post not found" });
     }
     if (post.user.toString() !== user._id.toString()) {
       console.log("both the ID are not matching");
@@ -164,6 +161,7 @@ const archivePost = async (req, res) => {
       { _id: postId },
       { $set: { archived: !post.archived } } 
     );
+    console.log("archivePost Post",updatedPost);
 
     res.status(200).json({ message: "Post archived successfully" });
   } catch (error) {
@@ -175,7 +173,7 @@ const archivePost = async (req, res) => {
 
 module.exports = { 
   postNewDataPosting, 
-  getDataPostedOnprofile,
+  getArchivePostOnprofile,
    deletePost,
    reportPost,
    getAllPosts,

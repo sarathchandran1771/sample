@@ -50,7 +50,7 @@ app.use(passport.initialize());
 app.use(passport.session()); 
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
-app.use(express.static(path.join(__dirname, './', 'build')));
+app.use(express.static(path.join(__dirname, 'build')));
 
 
 
@@ -59,7 +59,7 @@ app.use("/post", postRouter);
 app.use("/admin", adminRouter);
 
 app.get('/*', (req, res) => {
-  res.sendFile(path.join(__dirname, './', 'build', 'index.html')); 
+  res.sendFile(path.join(__dirname, 'build', 'index.html')); 
 });
 
 // Move the catch-all middleware to the end
@@ -73,7 +73,7 @@ const io = require("socket.io")(server,{
   pingTimeout: 6000,
   cors: {
     //origin: "http://localhost:3000",
-    origin: "https://connectloom.shop",
+    origin: "http://localhost:3000",
   },
 }); 
 
