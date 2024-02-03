@@ -3,20 +3,10 @@ const express = require("express");
 const cors = require('cors');
 const corsManage = express.Router();
 
-// Allow only specific origins
-const allowedOrigins = ['http://https://connectloom.shop', 'https://https://connectloom.shop'];
-
-// Move the cors middleware to be applied 
+// Allow all origins
 corsManage.use(cors({
     credentials: true,
-    origin: function (origin, callback) {
-        // Check if the origin is in the allowedOrigins array or if it's undefined (allow if same-origin)
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
+    origin: '*',
     methods: 'GET, POST, PATCH, PUT, DELETE, OPTIONS'
 }));
 
