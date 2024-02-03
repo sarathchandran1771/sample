@@ -20,7 +20,7 @@ const sendForgetPasswordEmail = async (user) => {
         from: process.env.USER,
         to: emailId,
         subject: "Reset your password",
-        text: `https://connectloom.shop/resetPassword/${user._id}/${token}`,
+        text: `http://https://connectloom.shop/resetPassword/${user._id}/${token}`,
         html: `
         <!doctype html>
         <html lang="en-US">

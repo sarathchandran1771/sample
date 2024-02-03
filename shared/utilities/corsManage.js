@@ -4,7 +4,7 @@ const cors = require('cors');
 const corsManage = express.Router();
 
 // Allow only specific origins
-const allowedOrigins = ['https://connectloom.shop', 'https://localhost:3000'];
+const allowedOrigins = ['http://https://connectloom.shop', 'https://https://connectloom.shop'];
 
 // Move the cors middleware to be applied 
 corsManage.use(cors({
