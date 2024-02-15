@@ -132,7 +132,7 @@ const getNewRegisteredUser = async (req, res) => {
     const { emailId, password } = req.body;
     const user = await User.findOne({ emailId });
 
-    const postsByUser = await Post.find({ user: user._id, isReport: false });
+    const postsByUser = await Post.find({ user: user._id});
  
     const isPasswordMatch = await user.matchPassword(password);
 
@@ -167,6 +167,51 @@ const getNewRegisteredUser = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+const getAllUsers = async (req, res) => {
+  try {
+    const {userId} = req.query;
+    const users = await User.find({ isVerified: { $ne: false },_id: { $ne: userId }}) 
+      .select("-password");
+    if (!users || users.length === 0) {
+      return res.status(200).json({ message: "Users not found" });
+    }
+    res.status(200).json({users});
+  } catch (error) {
+    console.error("Internal_get_error", error);
+    res.status(500).json({ message: "Internal Server Error", error });
+  }
+};
+
+const getAllFriends = async (req, res) => {
+  try {
+    const { userId } = req.query;
+    // Check if the user exists and is verified
+    const user = await User.findOne({ _id: userId, isVerified: true });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found or not verified" });
+    }
+    // Get followers and following users
+    const followers = await User.find({ _id: { $in: user.followers } }).select("-password");
+    const following = await User.find({ _id: { $in: user.following } }).select("-password");
+    // Get other users (not friends)
+    const otherUsers = await User.find({
+      isVerified: true,
+      _id: { $ne: userId },
+    }).select("-password");
+
+    // Combine friends and other users with friends appearing first
+    const allUsers = [...followers, ...following, ...otherUsers];
+
+    res.status(200).json({ users: allUsers });
+  } catch (error) {
+    console.error("Internal_get_error", error);
+    res.status(500).json({ message: "Internal Server Error", error });
+  }
+};
+
+
 
 const userForgetPassword = async (req, res) => {
   try {
@@ -388,32 +433,6 @@ const OAuth = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "An error occurred during authentication" });
-  }
-};
-
-const reportUser = async (req, res) => {
-  try {
-    const { userId } = req.body;
-    const user = await User.findById(userId);
-
-    if (!user) {
-      console.log("user not found for reporting");
-      return res.status(404).json({ error: "user not found" });
-    }
-
-    user.reportCount += 1;
-
-    if (user.reportCount >= 5) {
-      user.isVerified = false;
-    }
-
-    const updatedUser = await user.save();
-
-    console.log("user reported successfully");
-    return res.status(200).json({message: "successfully reported",updatedUser});
-  } catch (error) {
-    console.error("Error reporting user", error);
-    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -677,7 +696,6 @@ module.exports = {
   userForgetPassword,
   resetPassword,
   OAuth,
-  reportUser,
   updateUser,
   uploadProfileImage,
   ConfirmPayment,
@@ -685,5 +703,7 @@ module.exports = {
   paypalSuccess,
   webhookHandler,
   checkAndLogout,
-  searchUsers
+  searchUsers,
+  getAllUsers,
+  getAllFriends
 };

@@ -1,4 +1,4 @@
-// server/src/controllers/post/postControllers.js
+// server/src/controllers/post/commentControllers.js
 const express = require("express");
 const postRouter = express.Router();
 const corsManage = require("../../../shared/utilities/corsManage");
@@ -6,7 +6,7 @@ const Post = require("../../models/postSchema");
 const User = require("../../models/userSchema");
 const Comment = require("../../models/commentSchema/commentSchema");
 const ReplyComment = require("../../models/commentSchema/repliesSchema");
-const ReportedComments = require("../../models/commentSchema/reportOnCommentSchema");
+const ReportedComments = require("../../models/reportSchema/reportOnCommentSchema");
 const dotenv = require("dotenv");
 const mongoose = require('mongoose');
 
@@ -107,7 +107,6 @@ const replayForComment = async (req, res) => {
 
 const reportOnComment = async (req, res) => {
     const { parentComment, userId, reportReason } = req.body;
-    console.log("req.body",req.body)
     try {
         const user = await User.findOne({ _id: userId, isVerified: true });
         if (!user) {

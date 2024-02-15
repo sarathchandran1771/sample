@@ -2,6 +2,7 @@
 const ChatMessage = require('../../models/chatSchema');
 const ChatRoom = require('../../models/chatRoomSchema');
 const User = require("../../models/userSchema");
+const Post = require("../../models/postSchema.js")
 
 
 const getUsersForChat = async (req, res) => {
@@ -31,20 +32,21 @@ const createRoomID = async (req, res) => {
     // If no existing room is found, create a new one
     const savedChatRoom = await ChatRoom.create({
       userIds: [fromUserId, toUserId],
+      receiver:toUserId
     });
     if (savedChatRoom) {
       return res.json({ chatRoom: savedChatRoom, msg: "Chat Room created successfully." });
     }
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Internal Server Error" });
+    return res.status(500).json({ message: "Internal Server Error" }); 
   }
 };
 
 
 const addMessage = async (req, res) => {
   try {
-    const { toUserId, fromUserId, message } = req.body;
+    const { toUserId, fromUserId, message, forwardedPostId  } = req.body;
     let chatRoom = await ChatRoom.findOne({ userIds: { $all: [fromUserId, toUserId] } });
     // If no ChatRoom is found, create a new one
     if (!chatRoom) {
@@ -52,14 +54,23 @@ const addMessage = async (req, res) => {
         userIds: [fromUserId, toUserId],
         messages: [],
       });
-    }
+    } 
     const [fromUser, toUser ] = await Promise.all([
       User.findOne({ _id: fromUserId }, { password: 0 }), 
       User.findOne({ _id: toUserId }, { password: 0 }), 
     ]);
+
+    let forwardedPost = null;
+    if (forwardedPostId) {
+        forwardedPost = await Post.findById(forwardedPostId);
+    }
+
     // Create the message with the chatRoom set
     const messageData = await ChatMessage.create({
-      content: { text: message },
+      content: { 
+        text: message,
+        forwardedPost: forwardedPost,  
+      },
       users: [fromUser, toUser],
       sender: fromUserId,
       chatRoom: chatRoom._id,
@@ -99,6 +110,7 @@ const getMessage = async (req, res) => {
       return {
         fromSelf: msg.sender,
         message: msg.content ? msg.content.text : "",
+        postMessage: msg.content ?  msg.content.forwardedPost : "",
         createdAt: msg.createdAt,
         chatRoom: {
           _id: msg.chatRoom._id,
@@ -106,8 +118,10 @@ const getMessage = async (req, res) => {
           messages: msg.chatRoom.messages,
           createdAt: msg.chatRoom.createdAt,
           updatedAt: msg.chatRoom.updatedAt,
-        },      };
+        },
+      };
     });
+    
     res.json(projectedMessages);
   } catch (error) {
     console.error(error);

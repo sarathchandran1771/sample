@@ -17,6 +17,7 @@ const friendRequestController = require("../../controllers/user/followerControll
 const notificationController = require('../../controllers/user/notificationController');
 const ChatController = require('../../controllers/user/chatController');
 const AuthController = require('../../controllers/user/authController');
+const ReportController = require('../../controllers/user/reportController');
 
 
 //workspace
@@ -41,6 +42,10 @@ userRouter.get(
   }
 );
 
+userRouter.get("/allUsers", userController.getAllUsers);
+
+userRouter.get("/getFriends", userController.getAllFriends);
+
 userRouter.post( "/new/user",passwordStrengthMiddleware,userController.postNewUserRegister);
 
 userRouter.post("/mail-verification", userController.OAuth);
@@ -54,8 +59,6 @@ userRouter.get("/profile/:userId", userController.userProfileData);
 userRouter.post("/forgetPassword", userController.userForgetPassword);
 
 userRouter.post("/resetPassword/:id/:token", userController.resetPassword);
-
-userRouter.patch("/reportUser",blockUserMiddleware, userController.reportUser); 
 
 userRouter.patch("/edit-profile",blockUserMiddleware, userController.updateUser);
 
@@ -115,6 +118,7 @@ userRouter.post('/createRoom', ChatController.createRoomID);
 userRouter.post('/facebooklogin', AuthController.faceBookLogin);
 
 
+userRouter.post("/reportOnUserProfile", ReportController.reportOnUserProfile);
 
 
 module.exports = userRouter;

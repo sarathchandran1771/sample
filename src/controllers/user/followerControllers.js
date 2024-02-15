@@ -12,7 +12,7 @@ const sendRequest = async (req, res) => {
 
     // Check if the target user is blocked
     const toUser = await User.findById(toUserId);
-    if (toUser.restrict) {
+    if (toUser.restrict) { 
       return res.status(400).json({ message: "Target user is blocked." });
     }
 
@@ -21,15 +21,15 @@ const sendRequest = async (req, res) => {
       $or: [
         { fromUser: fromUserId, toUser: toUserId },
         { fromUser: toUserId, toUser: fromUserId },
-      ],
-    });
-
+      ],  
+    }); 
+  
     if (existingRequest !== null) {
       // Delete data from users
-      console.log(" existingRequest  toUserId", toUserId);
+      console.log(" existingRequest  toUserId", toUserId);   
       console.log("existingRequest   fromUserId", fromUserId);
 
-      await User.findByIdAndUpdate(
+      await User.findByIdAndUpdate( 
         fromUserId,
         {
           $pull: { following: toUserId, pendingFollowing: toUserId },
@@ -38,7 +38,7 @@ const sendRequest = async (req, res) => {
         { new: true }
       );
 
-      await User.findByIdAndUpdate(
+      await User.findByIdAndUpdate(   
         toUserId,
         {
           $pull: { followers: fromUserId, pendingFollowers: fromUserId },
@@ -87,6 +87,7 @@ const sendRequest = async (req, res) => {
 const getPendingRequest = async (req, res) => {
   try {
     const { fromUserId, toUserId } = req.query;
+    console.log("req.query",req.query)
     // Check if the target user is blocked
     const pendingRequest = await Friendrequest.findOne({
       fromUser: fromUserId,

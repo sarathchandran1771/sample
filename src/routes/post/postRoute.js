@@ -44,6 +44,9 @@ postRouter.post("/savePost", postSaveController.savePost);
 
 postRouter.get("/getSavedPost", postSaveController. getAllSavedPosts);
 
+
+postRouter.get("/getLikesOnPost", PostLikeController. getAllLikedPost);
+
 //Like post
 
 postRouter.post("/postLike", PostLikeController.likeUnlikePost);

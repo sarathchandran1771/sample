@@ -8,6 +8,8 @@ const {
 const { generateSignature } = require("../../middleware/cloudinaryMiddleware");
 const Post = require("../../models/postSchema");
 const User = require("../../models/userSchema");
+const SavedPost = require("../../models/savedPostSchema");
+
 const dotenv = require("dotenv");
 
 dotenv.config();
@@ -74,13 +76,13 @@ const getArchivePostOnprofile = async (req, res) => {
 
 const getAllPosts = async (req, res) => {
   try {
-    const posts = await Post.find({ isReport: { $ne: true }, reportCount: { $lt: 5 }, archived: { $ne: true }  })
+    const posts = await Post.find({ isReport: { $ne: true }, reportCount: { $lt: 5 }, archived: { $ne: true } })
       .populate("user") 
       .select("-password");
     if (!posts || posts.length === 0) {
       return res.status(200).json({ message: "Posts not found" });
     }
-    res.status(200).json(posts);
+    res.status(200).json({posts});
   } catch (error) {
     console.error("Internal_get_error", error);
     res.status(500).json({ message: "Internal Server Error", error });
