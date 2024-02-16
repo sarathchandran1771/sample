@@ -76,7 +76,7 @@ const getArchivePostOnprofile = async (req, res) => {
 
 const getAllPosts = async (req, res) => {
   try {
-    const posts = await Post.find({ isReport: { $ne: true }, reportCount: { $lt: 5 }, archived: { $ne: true } })
+    const posts = await Post.find({ isReport: { $ne: true }, archived: { $ne: true } })
       .populate("user") 
       .select("-password");
     if (!posts || posts.length === 0) {

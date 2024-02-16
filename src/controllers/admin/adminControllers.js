@@ -92,8 +92,7 @@ const getAdminLogin = async (req, res) => {
       httpOnly: true,
       expires: new Date(0),
     });
-    console.log("Admin Logged out successfully");
-    res.status(200).json({ message: "Logged out successfully" });
+    res.status(200).json({ message: "Logged out" });
   };
 
 
