@@ -53,7 +53,6 @@ app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'build')));
 
 
-
 app.use("/", userRouter);
 app.use("/post", postRouter);
 app.use("/admin", adminRouter);
@@ -62,7 +61,7 @@ app.get('/*', (req, res) => {
   res.sendFile(path.join(__dirname, 'build', 'index.html')); 
 });
 
-// Move the catch-all middleware to the end
+// Move the catch-all middleware
 app.use(notFound);
 app.use(errorHandler);
 
