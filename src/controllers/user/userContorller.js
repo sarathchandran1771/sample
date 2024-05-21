@@ -82,6 +82,7 @@ const postNewUserRegister = async (req, res) => {
     if (user) {
       await user.save();
       sendVerificationEmail(user);
+      res.send(true)
     } else {
       console.log("Failed to create user");
       return res.status(500).json({ error: "Failed to create user" });
