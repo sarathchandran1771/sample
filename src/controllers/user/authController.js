@@ -15,7 +15,7 @@ const faceBookLogin = async (req, res) => {
         method: 'GET',
       })
         .then((response) => response.json())
-        .then(async (graphApiResponse) => { // Rename the variable to avoid conflict
+        .then(async (graphApiResponse) => { // Rename the variable to avoid conflic
           const { email, name } = graphApiResponse;
           try {
             const user = await User.findOne({ emailId: email }).exec();
